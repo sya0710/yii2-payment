@@ -1,0 +1,22 @@
+{
+    "name": "sya/yii2-payment",
+    "description": "Module manager payment, upload payment",
+    "type": "yii2-extension",
+    "keywords": ["yii2","extension"," payment"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "phongnv",
+            "email": "phongnv093@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "yiisoft/yii2": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "sya\\payment\\": ""
+        }
+    }
+}
