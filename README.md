@@ -22,4 +22,4 @@ Payment::widget();
 ```
 
 ## License
-**yii2-ecommerce** is released under the MIT License. See the bundled LICENSE.md for details.
+**yii2-payment** is released under the MIT License. See the bundled LICENSE.md for details.
