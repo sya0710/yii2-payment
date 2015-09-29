@@ -14,7 +14,11 @@ to the require section of your composer.json file.
 ```php
 use sya\payment\Payment;
 
-$form->field($model, 'payment')->widget(Payment::className(), [];
+$form->field($model, 'payment')->widget(Payment::className(), []);
+
+OR
+
+Payment::widget();
 ```
 
 ## License
