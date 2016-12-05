@@ -92,7 +92,9 @@ class Payment extends InputWidget
                 $input .= Html::beginTag('div', ['class' => 'status_payment', 'id' => 'status_payment_' . $status, 'style' => 'display: none']);
                     foreach ($item as $name => $info) {
                         $placeholder = isset($info['placeholder']) ? $info['placeholder'] : null;
-                        $input .= Html::activeInput('text', $this->model, $this->attribute . '[infomation][' . $name . ']', ['placeholder' => $placeholder, 'class' => $this->options['columnClass'], 'style' => 'margin-top: 20px;']);
+                        $value = isset($info['value']) ? $info['value'] : null;
+
+                        $input .= Html::activeInput('text', $this->model, $this->attribute . '[infomation][' . $name . ']', ['placeholder' => $placeholder, 'class' => $this->options['columnClass'], 'readonly' => '', 'value' => $value, 'style' => 'margin-top: 20px;']);
                     }
                 $input .= Html::endTag('div');
             }
