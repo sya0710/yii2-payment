@@ -11,7 +11,7 @@ namespace sya\payment;
 use Yii;
 use yii\bootstrap\Html;
 use yii\widgets\InputWidget;
-use yii\helper\ArrayHelper;
+use yii\helpers\ArrayHelper;
 use yii\web\View;
 
 class Payment extends InputWidget
@@ -21,6 +21,8 @@ class Payment extends InputWidget
     CONST STATUS_PAYATHOME = 'pay_at_home';
 
     CONST STATUS_EMPTY = '';
+
+    private static $_instance = null;
 
     /**
      * @var string Name input when haven't model
@@ -48,6 +50,18 @@ class Payment extends InputWidget
     public $options = [];
 
     /**
+     * @return \sya\payment\Payment
+     */
+    public static function getInstance()
+    {
+        if (null === static::$_instance) {
+            static::$_instance = new static();
+        }
+
+        return static::$_instance;
+    }
+
+    /**
      * @inheritdoc
      */
     public function init()
@@ -70,7 +84,9 @@ class Payment extends InputWidget
             $this->options['onchange'] = 'changeValueStatusPayment(this);';
 
         $this->buildItems();
+    }
 
+    public function run() {
         $this->registerAssets();
 
         echo $this->renderInput();
@@ -91,10 +107,12 @@ class Payment extends InputWidget
             foreach ($this->columns as $status => $item) {
                 $input .= Html::beginTag('div', ['class' => 'status_payment', 'id' => 'status_payment_' . $status, 'style' => 'display: none']);
                     foreach ($item as $name => $info) {
+                        $column_value = Html::getAttributeValue($this->model, $this->attribute . '[infomation][' . $name . ']');
                         $placeholder = isset($info['placeholder']) ? $info['placeholder'] : null;
-                        $value = isset($info['value']) ? $info['value'] : null;
+                        $value = !empty($column_value) ? $column_value : ArrayHelper::getValue($info, 'value');
+                        $readonly = isset($info['readonly']) ? $info['readonly'] : null;
 
-                        $input .= Html::activeInput('text', $this->model, $this->attribute . '[infomation][' . $name . ']', ['placeholder' => $placeholder, 'class' => $this->options['columnClass'], 'readonly' => '', 'value' => $value, 'style' => 'margin-top: 20px;']);
+                        $input .= Html::activeInput('text', $this->model, $this->attribute . '[infomation][' . $name . ']', ['placeholder' => $placeholder, 'class' => $this->options['columnClass'], 'readonly' => $readonly, 'value' => $value, 'style' => 'margin-top: 20px;']);
                     }
                 $input .= Html::endTag('div');
             }
@@ -113,26 +131,23 @@ class Payment extends InputWidget
     }
 
     private function registerAssets() {
+        $value = $this->hasModel() ? Html::getAttributeValue($this->model, $this->attribute . '[status]') : $this->selected;
         $this->getView()->registerJs('
             function changeValueStatusPayment(element){
                 var status = $(element).val();
 
-                if (status == "' . self::STATUS_TRANSFER . '") {
-                    $(".status_payment").hide();
-                    $("#status_payment_" + status).show();
-                } else {
-                    $(".status_payment").hide();
-                }
+                $(".status_payment").hide();
+                $("#status_payment_" + status).show();
             }
         ', View::POS_END);
 
         $this->getView()->registerJs('
-            var status = "' . Html::getAttributeValue($this->model, $this->attribute . '[status]') . '";
+            var status = "' . $value . '";
             $("#status_payment_" + status).show();
         ', View::POS_READY);
     }
 
-    public static function getStatus($status){
+    public function getStatus($status){
         if (empty($status))
             return $this->items;
 
